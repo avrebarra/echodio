@@ -1,18 +1,48 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="asset/stylesheet.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 </head>
 
 <body>
     <div id="resounder-app">
-        <section class="main-controls">
-            <span id="state-displayer">idle</span>
-            <audio id="player"></audio>
-            <button id="button">Record</button>
+        <audio id="player"></audio>
+        <section class="hero is-warning is-fullheight has-text-centered">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">
+                        SoundEcho.js
+                    </h1>
+                    <h2 class="subtitle">
+                        Web sound mirroring implemented using HTML5 MediaRecorder and audio playback feature.
+                    </h2>
+                </div>
+            </div>
+            <section class="section">
+                <div class="container has-text-centered">
+                    <div class="card">
+                        <div class="card-content">
+                            <progress id="progress-bar" class="progress is-small is-primary" value="0" max="100">15%</progress>
+                            <i> state: <span id="state-displayer">idle</span></i>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-content">
+                            <a id="control-button" class="button is-large is-primary">
+                                <span id="button-text">Record</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
         </section>
     </div>
 

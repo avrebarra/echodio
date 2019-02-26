@@ -44,9 +44,12 @@ class State {
 }
 
 // MAIN ROUTINE
-const controlButtonElement = document.getElementById('button')
-const audioPlayerElement = document.getElementById('player')
-const stateDisplayElement = document.getElementById('state-displayer')
+const AudioPlayer = document.getElementById('player')
+const StateDisplayer = document.getElementById('state-displayer')
+const ControlButton = document.getElementById('control-button')
+
+const ProgressBar = document.getElementById('progress-bar')
+const ButtonText = document.getElementById('button-text')
 
 const streamRecorder = new StreamToChunkRecorder()
 var appState = new State('idle')
@@ -59,29 +62,32 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => streamRecord
 appState.onChange(newState => {
   switch (newState) {
     case 'idle':
-      audioPlayerElement.pause();
-      audioPlayerElement.currentTime = 0;
+      AudioPlayer.pause();
+      AudioPlayer.currentTime = 0;
 
-      stateDisplayElement.innerHTML = 'idle'
-      controlButtonElement.innerHTML = 'record'
+      ProgressBar.value = 0
+      StateDisplayer.innerHTML = 'idle'
+      ButtonText.innerHTML = 'record'
       break
     case 'recording':
-      stateDisplayElement.innerHTML = 'recording...'
-      controlButtonElement.innerHTML = 'echo';
+      ProgressBar.removeAttribute('value')
+      StateDisplayer.innerHTML = 'recording...'
+      ButtonText.innerHTML = 'echo';
       break
     case 'playing':
-      stateDisplayElement.innerHTML = 'playing...'
-      controlButtonElement.innerHTML = 'stop';
+      ProgressBar.removeAttribute('value')
+      StateDisplayer.innerHTML = 'playing...'
+      ButtonText.innerHTML = 'stop';
       break
     case 'play-ready':
+      AudioPlayer.play()
       appState.change('playing')
-      audioPlayerElement.play()
       break
   }
 })
 
-audioPlayerElement.addEventListener('ended', () => appState.change('idle'))
-controlButtonElement.addEventListener('click', () => {
+AudioPlayer.addEventListener('ended', () => appState.change('idle'))
+ControlButton.addEventListener('click', () => {
   switch (appState.now()) {
     case 'idle':
       appState.change('recording')
@@ -90,7 +96,7 @@ controlButtonElement.addEventListener('click', () => {
         const audioURL = window.URL.createObjectURL(blob);
         recorderChunks = [];
 
-        audioPlayerElement.src = audioURL;
+        AudioPlayer.src = audioURL;
         appState.change('play-ready')
       })
       break

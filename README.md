@@ -1,4 +1,4 @@
-# 🎧 echodio
+# 🦜 echodio
 
 Fun experiment project to mirror (or talk back) your voice.
 

@@ -94,22 +94,27 @@ export const Home: React.FC<Props> = (props) => {
         >
           <img
             src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/310/parrot_1f99c.png"
+            className="drop-shadow-md"
             alt=""
           />
         </div>
-        <div className="font-bold text-5xl mb-2">
-          <Link className="" to={`/`}>
-            Echodio
-          </Link>
+        <div className="drop-shadow-xl">
+          <div className="font-bold text-6xl mb-2">
+            <Link className="text-white" to={`/`}>
+              echodio.
+            </Link>
+          </div>
+          <div className="text-2xl text-stone-600">
+            record and replay your voice, yeah just that.
+          </div>
         </div>
-        <div className="text-2xl">Mirror your voice~</div>
         <br />
       </div>
 
-      <div className="">
+      <div className="drop-shadow-md">
         {appState == AppState.Idle && (
           <div
-            className="py-3 bg-blue-500 hover:animate-pulse active:bg-blue-600 text-white text-center text-xl font-medium cursor-pointer"
+            className="py-5 bg-blue-500 hover:animate-pulse active:bg-blue-600 text-white text-center text-xl font-medium cursor-pointer"
             onClick={onRecord}
           >
             Start Recording
@@ -117,7 +122,7 @@ export const Home: React.FC<Props> = (props) => {
         )}
         {appState == AppState.Recording && (
           <div
-            className="py-3 bg-green-600 hover:animate-pulse active:bg-green-700 text-white text-center text-xl font-medium cursor-pointer"
+            className="py-5 bg-green-600 hover:animate-pulse active:bg-green-700 text-white text-center text-xl font-medium cursor-pointer"
             onClick={onPlayEcho}
           >
             Stop and Echo
@@ -125,7 +130,7 @@ export const Home: React.FC<Props> = (props) => {
         )}
         {appState == AppState.Playing && (
           <div
-            className="py-3 bg-red-500 hover:animate-pulse active:bg-red-600 text-white text-center text-xl font-medium cursor-pointer"
+            className="py-5 bg-red-500 hover:animate-pulse active:bg-red-600 text-white text-center text-xl font-medium cursor-pointer"
             onClick={onStopEcho}
           >
             Stop Echo

@@ -32,12 +32,12 @@ export const App: React.FC<Props> = (props) => {
           <ChakraProvider>
             <Helmet>
               <title>
-                {config.APP_NAME} - {config.APP_DESCRIPTION}
+                {config.appName} - {config.appDescription}
               </title>
-              <meta name="description" content={config.APP_DESCRIPTION} />
-              <link rel="shortcut icon" href={config.APP_FAVICON_URL} />
+              <meta name="description" content={config.appDescription} />
+              <link rel="shortcut icon" href={config.appFaviconURL} />
             </Helmet>
-            <BrowserRouter basename={config.SUB_DIR_PATH}>
+            <BrowserRouter basename={config.subDirPath}>
               <React.Suspense fallback={fxRenderRouteLoader()}>
                 <ErrorHandler />
                 <Routes>

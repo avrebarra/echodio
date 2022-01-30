@@ -1,9 +1,9 @@
-type Recorder = {
+export type Recorder = {
   start: (opts: RecordingOptions) => void;
   stop: () => void;
 };
 
-type RecordingOptions = {
+export type RecordingOptions = {
   onStop: (blob: Blob) => void;
 };
 
@@ -17,14 +17,13 @@ export const NewRecorder = async (): Promise<Recorder> => {
 
   // setup recorder
   const mediaChunks: BlobPart[] = [];
-  const mediaRecorder = new MediaRecorder(mediastream, {
-    mimeType: "audio/m4a",
-  });
+  const mediaRecorder = new MediaRecorder(mediastream);
   mediaRecorder.ondataavailable = (e) => {
     mediaChunks.push(e.data);
   };
   mediaRecorder.onstop = () => {
-    latestBlob = new Blob(mediaChunks, { type: "audio/m4a" });
+    latestBlob = new Blob(mediaChunks, { type: "audio/ogg; codecs=opus" });
+    latestOpts.onStop(latestBlob); // trigger callback
   };
 
   // build recorder wrapper
@@ -36,7 +35,6 @@ export const NewRecorder = async (): Promise<Recorder> => {
     },
     stop: () => {
       mediaRecorder.stop();
-      latestOpts.onStop(latestBlob); // trigger callback
     },
   };
 };

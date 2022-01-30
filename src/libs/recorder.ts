@@ -16,13 +16,14 @@ export const NewRecorder = async (): Promise<Recorder> => {
   let latestOpts: RecordingOptions;
 
   // setup recorder
-  const mediaChunks: BlobPart[] = [];
+  let mediaChunks: BlobPart[] = [];
   const mediaRecorder = new MediaRecorder(mediastream);
   mediaRecorder.ondataavailable = (e) => {
     mediaChunks.push(e.data);
   };
   mediaRecorder.onstop = () => {
     latestBlob = new Blob(mediaChunks, { type: "audio/ogg; codecs=opus" });
+    mediaChunks = []; // reset chunks
     latestOpts.onStop(latestBlob); // trigger callback
   };
 

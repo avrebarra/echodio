@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { Link } from "react-router-dom";
-import { Button } from "@chakra-ui/react";
 
 import evts from "../services/eventcommons";
 import * as recorder from "../libs/recorder";
@@ -16,7 +15,7 @@ enum AppState {
 }
 
 let engine: recorder.Recorder;
-const recordings: Blob[] = [];
+let recordings: Blob[] = [];
 
 export const Home: React.FC<Props> = (props) => {
   // context, vars, and states
@@ -32,6 +31,7 @@ export const Home: React.FC<Props> = (props) => {
     engine.start({
       onStop: (blob) => {
         recordings.push(new Blob([blob], { type: blob.type }));
+        recordings = recordings.slice(0, Math.min(10, recordings.length));
       },
     });
     setAppState(AppState.Recording);
@@ -57,7 +57,7 @@ export const Home: React.FC<Props> = (props) => {
     <>
       <div className="text-center">
         <br />
-        <div className="flex justify-center mb-3">
+        <div className="flex justify-center mb-3 animate-bounce">
           <img
             src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/310/parrot_1f99c.png"
             alt=""
@@ -72,21 +72,30 @@ export const Home: React.FC<Props> = (props) => {
         <br />
       </div>
 
-      <div className="flex justify-center">
+      <div className="">
         {appstate == AppState.Idle && (
-          <Button size={"lg"} colorScheme="blue" onClick={fxRunRecord}>
+          <div
+            className="py-3 bg-blue-500 hover:animate-pulse active:bg-blue-600 text-white text-center text-xl font-medium cursor-pointer"
+            onClick={fxRunRecord}
+          >
             Start Recording
-          </Button>
+          </div>
         )}
         {appstate == AppState.Recording && (
-          <Button size={"lg"} colorScheme="green" onClick={fxRunEcho}>
-            Echo
-          </Button>
+          <div
+            className="py-3 bg-green-600 hover:animate-pulse active:bg-green-700 text-white text-center text-xl font-medium cursor-pointer"
+            onClick={fxRunEcho}
+          >
+            Stop and Echo
+          </div>
         )}
         {appstate == AppState.Playing && (
-          <Button size={"lg"} colorScheme="red" onClick={fxStopEcho}>
-            Stop
-          </Button>
+          <div
+            className="py-3 bg-red-500 hover:animate-pulse active:bg-red-600 text-white text-center text-xl font-medium cursor-pointer"
+            onClick={fxStopEcho}
+          >
+            Stop Echo
+          </div>
         )}
       </div>
     </>

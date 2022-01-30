@@ -14,50 +14,84 @@ enum AppState {
   Playing,
 }
 
+// TODO: this is a code smell
 let engine: recorder.Recorder;
 let recordings: Blob[] = [];
+let audioplayer = document.createElement("audio");
 
 export const Home: React.FC<Props> = (props) => {
   // context, vars, and states
   const [readiness, setReadiness] = React.useState<boolean>(false);
-  const [appstate, setAppState] = React.useState<AppState>(AppState.Idle);
+  const [appState, setAppState] = React.useState<AppState>(AppState.Idle);
 
   // helper funcs
-  const fxSetup = async () => {
+  const onSetupComponent = async () => {
     if (!engine) engine = await recorder.NewRecorder();
+    if (!readiness) {
+      evts.on("echodio.RecordingAdded", onPlayRecordingWithIndex);
+      evts.on("echodio.PlaybackEnded", onPlaybackEnded);
+      setReadiness(true);
+    }
   };
-  const fxRunRecord = async () => {
+
+  const onRecord = async () => {
     if (!engine) return evts.emit("error", cfg.errors.ErrRecorderNotReady);
+
     engine.start({
       onStop: (blob) => {
+        // add to recordings
         recordings.push(new Blob([blob], { type: blob.type }));
         recordings = recordings.slice(0, Math.min(10, recordings.length));
+
+        // fire events
+        evts.emit("echodio.RecordingAdded", recordings.length - 1);
       },
     });
     setAppState(AppState.Recording);
   };
-  const fxRunEcho = async () => {
+
+  const onPlayEcho = async () => {
     if (!engine) return evts.emit("error", cfg.errors.ErrRecorderNotReady);
+
     engine.stop();
-    // player start
     setAppState(AppState.Playing);
   };
-  const fxStopEcho = async () => {
+
+  const onStopEcho = async () => {
     if (!engine) return evts.emit("error", cfg.errors.ErrRecorderNotReady);
-    // player stop
+
+    audioplayer.pause();
+    audioplayer.currentTime = 0;
+    evts.emit("echodio.PlaybackEnded");
+  };
+
+  const onPlayRecordingWithIndex = async (index: number) => {
+    audioplayer.src = URL.createObjectURL(recordings[index]);
+    audioplayer.onended = () => evts.emit("echodio.PlaybackEnded");
+    audioplayer.play();
+  };
+
+  const onPlaybackEnded = async () => {
     setAppState(AppState.Idle);
   };
 
   // effects
   React.useEffect(() => {
-    fxSetup();
-  }, [readiness, appstate]);
+    onSetupComponent();
+  }, [readiness]);
 
   return (
     <>
       <div className="text-center">
         <br />
-        <div className="flex justify-center mb-3 animate-bounce">
+        <br />
+        <div
+          className={
+            "flex justify-center mb-3 " +
+            (appState == AppState.Recording ? "animate-pulse" : "") +
+            (appState == AppState.Playing ? "animate-bounce" : "")
+          }
+        >
           <img
             src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/microsoft/310/parrot_1f99c.png"
             alt=""
@@ -73,26 +107,26 @@ export const Home: React.FC<Props> = (props) => {
       </div>
 
       <div className="">
-        {appstate == AppState.Idle && (
+        {appState == AppState.Idle && (
           <div
             className="py-3 bg-blue-500 hover:animate-pulse active:bg-blue-600 text-white text-center text-xl font-medium cursor-pointer"
-            onClick={fxRunRecord}
+            onClick={onRecord}
           >
             Start Recording
           </div>
         )}
-        {appstate == AppState.Recording && (
+        {appState == AppState.Recording && (
           <div
             className="py-3 bg-green-600 hover:animate-pulse active:bg-green-700 text-white text-center text-xl font-medium cursor-pointer"
-            onClick={fxRunEcho}
+            onClick={onPlayEcho}
           >
             Stop and Echo
           </div>
         )}
-        {appstate == AppState.Playing && (
+        {appState == AppState.Playing && (
           <div
             className="py-3 bg-red-500 hover:animate-pulse active:bg-red-600 text-white text-center text-xl font-medium cursor-pointer"
-            onClick={fxStopEcho}
+            onClick={onStopEcho}
           >
             Stop Echo
           </div>

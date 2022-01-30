@@ -31,7 +31,9 @@ export const App: React.FC<Props> = (props) => {
         <HelmetProvider>
           <ChakraProvider>
             <Helmet>
-              <title>{config.APP_NAME} - Home</title>
+              <title>
+                {config.APP_NAME} - {config.APP_DESCRIPTION}
+              </title>
               <meta name="description" content={config.APP_DESCRIPTION} />
               <link rel="shortcut icon" href={config.APP_FAVICON_URL} />
             </Helmet>
